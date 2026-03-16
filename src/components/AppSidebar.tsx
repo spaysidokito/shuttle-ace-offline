@@ -26,7 +26,7 @@ export function AppSidebar() {
           <Zap className="h-7 w-7 text-primary shrink-0" />
           {!collapsed && (
             <span className="font-display text-xl tracking-wider text-foreground">
-              ProCourt
+              RallyQ
             </span>
           )}
         </div>

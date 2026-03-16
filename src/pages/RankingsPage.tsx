@@ -51,7 +51,7 @@ export default function RankingsPage() {
                   <span className="font-display text-sm tracking-wider text-center truncate max-w-full">{p.name}</span>
                   <span className="text-xs text-muted-foreground mt-1">{p.wins}W / {p.losses}L</span>
                   <div className={`w-full ${heights[idx]} bg-secondary/50 rounded-t-md mt-2 flex items-center justify-center border border-border`}>
-                    <span className="font-display text-2xl font-bold">{p.points}</span>
+                    <span className="text-xs text-muted-foreground">{p.gamesPlayed} matches</span>
                   </div>
                 </motion.div>
               );
@@ -60,14 +60,13 @@ export default function RankingsPage() {
 
           {/* Full table */}
           <div className="rounded-lg border border-border overflow-hidden">
-            <div className="grid grid-cols-[50px_1fr_70px_70px_80px_70px_80px] gap-2 px-4 py-3 bg-secondary/50 text-xs font-display tracking-wider text-muted-foreground">
+            <div className="grid grid-cols-[50px_1fr_70px_70px_80px_70px] gap-2 px-4 py-3 bg-secondary/50 text-xs font-display tracking-wider text-muted-foreground">
               <span className="text-center">#</span>
               <span>Player</span>
               <span className="text-center">Wins</span>
               <span className="text-center">Losses</span>
               <span className="text-center">Matches</span>
               <span className="text-center">Win%</span>
-              <span className="text-center">Points</span>
             </div>
             {ranked.map((p, i) => {
               const winRate = p.gamesPlayed > 0 ? Math.round((p.wins / p.gamesPlayed) * 100) : 0;
@@ -79,7 +78,6 @@ export default function RankingsPage() {
                   <span className="text-center text-sm text-status-playing">{p.losses}</span>
                   <span className="text-center text-sm text-muted-foreground">{p.gamesPlayed}</span>
                   <span className="text-center text-sm">{winRate}%</span>
-                  <span className="text-center font-display font-bold text-sm">{p.points}</span>
                 </div>
               );
             })}

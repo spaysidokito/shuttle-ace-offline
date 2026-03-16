@@ -38,6 +38,7 @@ export interface Settings {
   singlesShuttleFee: number;
   doublesShuttleFee: number;
   courtFeePerPlayer: number;
+  includeShuttleFee: boolean;
   currency: string;
 }
 
@@ -104,5 +105,6 @@ export const DEFAULT_SETTINGS: Settings = {
   singlesShuttleFee: 60,
   doublesShuttleFee: 30,
   courtFeePerPlayer: 120,
+  includeShuttleFee: true,
   currency: '₱',
 };

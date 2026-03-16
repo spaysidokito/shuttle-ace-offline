@@ -76,6 +76,7 @@ export default function FeesPage() {
         <span>Singles Shuttle: <strong className="text-foreground">{settings.currency}{settings.singlesShuttleFee}</strong></span>
         <span>Doubles Shuttle: <strong className="text-foreground">{settings.currency}{settings.doublesShuttleFee}</strong></span>
         <span>Court Fee/Match: <strong className="text-foreground">{settings.currency}{settings.courtFeePerPlayer}</strong></span>
+        <span>Shuttle fee active: <strong className="text-foreground">{settings.includeShuttleFee ? 'Yes' : 'No'}</strong></span>
       </div>
 
       {/* Player fees table */}

@@ -4,6 +4,7 @@ import { useApp } from '@/context/AppContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Settings as SettingsIcon, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
@@ -94,7 +95,7 @@ export default function SettingsPage() {
               />
             </div>
             <div>
-            <label className="text-sm text-muted-foreground mb-1 block">Court Fee (total per match) ({form.currency})</label>
+              <label className="text-sm text-muted-foreground mb-1 block">Court Fee (total per match) ({form.currency})</label>
               <Input
                 type="number"
                 min={0}
@@ -102,6 +103,13 @@ export default function SettingsPage() {
                 onChange={e => setForm({ ...form, courtFeePerPlayer: Number(e.target.value) })}
                 className="h-11"
               />
+            </div>
+            <div className="sm:col-span-2 flex items-center gap-3">
+              <Switch
+                checked={form.includeShuttleFee}
+                onCheckedChange={checked => setForm({ ...form, includeShuttleFee: checked })}
+              />
+              <span className="text-sm">Include shuttle fee in billing (uncheck if players bring their own shuttle)</span>
             </div>
             <div>
               <label className="text-sm text-muted-foreground mb-1 block">Currency Symbol</label>

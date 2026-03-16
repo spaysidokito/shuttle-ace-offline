@@ -177,8 +177,8 @@ export async function endMatch(matchId: string, winnerIds: string[]): Promise<vo
       p.points += 1;
     }
     p.status = 'waiting';
-    // Fee: shuttle fee per game only (court fee is billed on start/reservation)
-    const shuttleFee = match.matchType === 'singles' ? settings.singlesShuttleFee : settings.doublesShuttleFee;
+    // Fee: add shuttle fee only if shuttle is being charged (optional bring-your-own shuttle)
+    const shuttleFee = settings.includeShuttleFee ? (match.matchType === 'singles' ? settings.singlesShuttleFee : settings.doublesShuttleFee) : 0;
     p.feeOwed += shuttleFee;
     await db.put('players', p);
     await addToQueue(pid);

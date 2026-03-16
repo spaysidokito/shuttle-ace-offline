@@ -114,6 +114,9 @@ export async function getAllMatches(): Promise<Match[]> {
 
 export async function startMatch(courtId: string, playerIds: string[], matchType: 'singles' | 'doubles'): Promise<Match> {
   const db = await getDB();
+  const settings = await getSettings();
+  const courtFeeShare = Math.round((settings.courtFeePerPlayer / playerIds.length) * 100) / 100;
+
   const match: Match = {
     id: generateId(),
     courtId,
@@ -134,11 +137,12 @@ export async function startMatch(courtId: string, playerIds: string[], matchType
     await db.put('courts', court);
   }
 
-  // Update player statuses
+  // Apply court fee share at start (reservation-based) and mark players as playing
   for (const pid of playerIds) {
     const p = await db.get('players', pid);
     if (p) {
       p.status = 'playing';
+      p.feeOwed += courtFeeShare;
       await db.put('players', p);
     }
     await removeFromQueue(pid);
@@ -173,10 +177,9 @@ export async function endMatch(matchId: string, winnerIds: string[]): Promise<vo
       p.points += 1;
     }
     p.status = 'waiting';
-    // Fee
+    // Fee: shuttle fee per game only (court fee is billed on start/reservation)
     const shuttleFee = match.matchType === 'singles' ? settings.singlesShuttleFee : settings.doublesShuttleFee;
-    const courtFeeShare = Math.round((settings.courtFeePerPlayer / match.players.length) * 100) / 100;
-    p.feeOwed += shuttleFee + courtFeeShare;
+    p.feeOwed += shuttleFee;
     await db.put('players', p);
     await addToQueue(pid);
   }
@@ -215,17 +218,19 @@ export async function updateSettings(settings: Settings): Promise<void> {
 // ── Smart Queue Logic ──
 export async function getNextPlayers(matchType: 'singles' | 'doubles'): Promise<Player[]> {
   const queue = await getQueue();
-  const count = matchType === 'singles' ? 2 : 4;
-  const players: Player[] = [];
+  const waitingPlayers = await Promise.all(queue.map(entry => getPlayer(entry.playerId)));
+  const filtered = waitingPlayers.filter((p): p is Player => !!p && p.status === 'waiting');
 
-  for (const entry of queue) {
-    if (players.length >= count) break;
-    const p = await getPlayer(entry.playerId);
-    if (p && p.status === 'waiting') {
-      players.push(p);
-    }
+  if (matchType === 'singles') {
+    return filtered.slice(0, 2);
   }
-  return players;
+
+  // doubles: better balance by mixing win ratio and waiting order
+  const sorted = filtered
+    .map(p => ({ player: p, ratio: p.gamesPlayed > 0 ? p.wins / p.gamesPlayed : 0 }))
+    .sort((a, b) => a.ratio - b.ratio || a.player.gamesPlayed - b.player.gamesPlayed);
+
+  return sorted.slice(0, 4).map(item => item.player);
 }
 
 // ── Reset ──

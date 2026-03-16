@@ -225,8 +225,8 @@ export default function CourtDashboard() {
       </div>
 
       {/* Queue strip */}
-      <div className="mb-6 p-3 rounded-lg bg-secondary/50 border border-border">
-        <div className="flex items-center gap-2 mb-2">
+      <div className="mb-6 p-3 rounded-lg bg-secondary/50 border border-border overflow-x-auto">
+        <div className="flex flex-wrap items-center gap-2 mb-2">
           <span className="text-xs font-display text-status-waiting tracking-wider">QUEUE</span>
           <Badge variant="outline" className="text-xs">{queuePlayers.length}</Badge>
         </div>
@@ -242,7 +242,7 @@ export default function CourtDashboard() {
       </div>
 
       {/* Courts grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {courts.map(court => (
           <CourtCard key={court.id} court={court} />
         ))}

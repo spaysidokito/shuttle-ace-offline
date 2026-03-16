@@ -33,7 +33,7 @@ export default function RankingsPage() {
       ) : (
         <>
           {/* Top 3 podium */}
-          <div className="grid grid-cols-3 gap-3 mb-8 max-w-xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-8 max-w-xl mx-auto">
             {[1, 0, 2].map((idx) => {
               const p = top3[idx];
               if (!p) return <div key={idx} />;
@@ -60,7 +60,8 @@ export default function RankingsPage() {
 
           {/* Full table */}
           <div className="rounded-lg border border-border overflow-hidden">
-            <div className="grid grid-cols-[50px_1fr_70px_70px_80px_70px] gap-2 px-4 py-3 bg-secondary/50 text-xs font-display tracking-wider text-muted-foreground">
+            <div className="overflow-x-auto">
+              <div className="grid grid-cols-[50px_1fr_70px_70px_80px_70px] gap-2 px-4 py-3 bg-secondary/50 text-xs font-display tracking-wider text-muted-foreground">
               <span className="text-center">#</span>
               <span>Player</span>
               <span className="text-center">Wins</span>
@@ -71,7 +72,7 @@ export default function RankingsPage() {
             {ranked.map((p, i) => {
               const winRate = p.gamesPlayed > 0 ? Math.round((p.wins / p.gamesPlayed) * 100) : 0;
               return (
-                <div key={p.id} className={`grid grid-cols-[50px_1fr_70px_70px_80px_70px_80px] gap-2 px-4 py-3 items-center min-h-[52px] ${i % 2 === 0 ? 'bg-card' : 'bg-card/50'} border-t border-border`}>
+                <div key={p.id} className={`grid grid-cols-[50px_1fr_70px_70px_80px_70px] gap-2 px-4 py-3 items-center min-h-[52px] ${i % 2 === 0 ? 'bg-card' : 'bg-card/50'} border-t border-border`}>
                   <span className="text-center font-display font-bold text-muted-foreground">{i + 1}</span>
                   <span className="font-medium text-sm truncate">{p.name}</span>
                   <span className="text-center text-sm text-status-available font-semibold">{p.wins}</span>
@@ -82,6 +83,8 @@ export default function RankingsPage() {
               );
             })}
           </div>
+        </div>
+      </div>
         </>
       )}
     </div>

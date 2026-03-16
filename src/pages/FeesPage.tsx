@@ -43,7 +43,7 @@ export default function FeesPage() {
       </div>
 
       {/* Summary cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
         <div className="rounded-lg border border-border bg-card p-5">
           <div className="flex items-center gap-2 text-muted-foreground text-xs font-display tracking-wider mb-2">
             <DollarSign className="h-4 w-4" /> TOTAL OWED
@@ -80,6 +80,7 @@ export default function FeesPage() {
 
       {/* Player fees table */}
       <div className="rounded-lg border border-border overflow-hidden">
+        <div className="overflow-x-auto">
         <div className="grid grid-cols-[1fr_100px_100px_100px_100px] gap-2 px-4 py-3 bg-secondary/50 text-xs font-display tracking-wider text-muted-foreground">
           <span>Player</span>
           <span className="text-center">Owed</span>

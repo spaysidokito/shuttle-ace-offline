@@ -75,7 +75,7 @@ export default function FeesPage() {
       <div className="flex flex-wrap gap-4 mb-6 text-sm text-muted-foreground">
         <span>Singles Shuttle: <strong className="text-foreground">{settings.currency}{settings.singlesShuttleFee}</strong></span>
         <span>Doubles Shuttle: <strong className="text-foreground">{settings.currency}{settings.doublesShuttleFee}</strong></span>
-        <span>Court Fee/Player: <strong className="text-foreground">{settings.currency}{settings.courtFeePerPlayer}</strong></span>
+        <span>Court Fee/Match: <strong className="text-foreground">{settings.currency}{settings.courtFeePerPlayer}</strong></span>
       </div>
 
       {/* Player fees table */}

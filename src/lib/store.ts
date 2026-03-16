@@ -175,7 +175,8 @@ export async function endMatch(matchId: string, winnerIds: string[]): Promise<vo
     p.status = 'waiting';
     // Fee
     const shuttleFee = match.matchType === 'singles' ? settings.singlesShuttleFee : settings.doublesShuttleFee;
-    p.feeOwed += shuttleFee + settings.courtFeePerPlayer;
+    const courtFeeShare = Math.round((settings.courtFeePerPlayer / match.players.length) * 100) / 100;
+    p.feeOwed += shuttleFee + courtFeeShare;
     await db.put('players', p);
     await addToQueue(pid);
   }

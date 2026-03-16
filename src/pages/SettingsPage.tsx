@@ -94,7 +94,7 @@ export default function SettingsPage() {
               />
             </div>
             <div>
-              <label className="text-sm text-muted-foreground mb-1 block">Court Fee per Player ({form.currency})</label>
+            <label className="text-sm text-muted-foreground mb-1 block">Court Fee (total per match) ({form.currency})</label>
               <Input
                 type="number"
                 min={0}

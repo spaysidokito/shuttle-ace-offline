@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,6 +9,7 @@ import { Settings as SettingsIcon, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function SettingsPage() {
+  const navigate = useNavigate();
   const { settings, updateSettings, resetAll } = useApp();
   const [form, setForm] = useState(settings);
   const [showReset, setShowReset] = useState(false);
@@ -18,10 +20,16 @@ export default function SettingsPage() {
   };
 
   const handleReset = async () => {
-    await resetAll();
-    setShowReset(false);
-    toast.success('All data has been reset.');
-    window.location.reload();
+    try {
+      await resetAll();
+      setShowReset(false);
+      toast.success('All data has been reset.');
+      // Navigate to root after reset so we don't stay on /settings where refresh of this URL may be absent in static hosting.
+      navigate('/');
+    } catch (err) {
+      toast.error('Reset failed. Please try again.');
+      console.error('resetAll error', err);
+    }
   };
 
   return (

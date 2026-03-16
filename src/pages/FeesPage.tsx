@@ -81,39 +81,40 @@ export default function FeesPage() {
       {/* Player fees table */}
       <div className="rounded-lg border border-border overflow-hidden">
         <div className="overflow-x-auto">
-        <div className="grid grid-cols-[1fr_100px_100px_100px_100px] gap-2 px-4 py-3 bg-secondary/50 text-xs font-display tracking-wider text-muted-foreground">
-          <span>Player</span>
-          <span className="text-center">Owed</span>
-          <span className="text-center">Paid</span>
-          <span className="text-center">Balance</span>
-          <span className="text-center">Action</span>
-        </div>
-        {playersWithFees.length === 0 ? (
-          <div className="text-center py-12 text-muted-foreground text-sm">No fees recorded yet</div>
-        ) : (
-          playersWithFees.map((p, i) => {
-            const balance = p.feeOwed - p.feePaid;
-            return (
-              <div key={p.id} className={`grid grid-cols-[1fr_100px_100px_100px_100px] gap-2 px-4 py-3 items-center min-h-[52px] ${i % 2 === 0 ? 'bg-card' : 'bg-card/50'} border-t border-border`}>
-                <span className="font-medium text-sm truncate">{p.name}</span>
-                <span className="text-center text-sm">{settings.currency}{p.feeOwed}</span>
-                <span className="text-center text-sm text-status-available">{settings.currency}{p.feePaid}</span>
-                <span className={`text-center text-sm font-semibold ${balance > 0 ? 'text-status-waiting' : 'text-status-available'}`}>
-                  {settings.currency}{balance}
-                </span>
-                <div className="flex justify-center">
-                  {balance > 0 ? (
-                    <Button size="sm" variant="secondary" className="h-9 font-display tracking-wider text-xs" onClick={() => markPaid(p)}>
-                      Mark Paid
-                    </Button>
-                  ) : (
-                    <CheckCircle className="h-5 w-5 text-status-available" />
-                  )}
+          <div className="grid grid-cols-[1fr_100px_100px_100px_100px] gap-2 px-4 py-3 bg-secondary/50 text-xs font-display tracking-wider text-muted-foreground">
+            <span>Player</span>
+            <span className="text-center">Owed</span>
+            <span className="text-center">Paid</span>
+            <span className="text-center">Balance</span>
+            <span className="text-center">Action</span>
+          </div>
+          {playersWithFees.length === 0 ? (
+            <div className="text-center py-12 text-muted-foreground text-sm">No fees recorded yet</div>
+          ) : (
+            playersWithFees.map((p, i) => {
+              const balance = p.feeOwed - p.feePaid;
+              return (
+                <div key={p.id} className={`grid grid-cols-[1fr_100px_100px_100px_100px] gap-2 px-4 py-3 items-center min-h-[52px] ${i % 2 === 0 ? 'bg-card' : 'bg-card/50'} border-t border-border`}>
+                  <span className="font-medium text-sm truncate">{p.name}</span>
+                  <span className="text-center text-sm">{settings.currency}{p.feeOwed}</span>
+                  <span className="text-center text-sm text-status-available">{settings.currency}{p.feePaid}</span>
+                  <span className={`text-center text-sm font-semibold ${balance > 0 ? 'text-status-waiting' : 'text-status-available'}`}>
+                    {settings.currency}{balance}
+                  </span>
+                  <div className="flex justify-center">
+                    {balance > 0 ? (
+                      <Button size="sm" variant="secondary" className="h-9 font-display tracking-wider text-xs" onClick={() => markPaid(p)}>
+                        Mark Paid
+                      </Button>
+                    ) : (
+                      <CheckCircle className="h-5 w-5 text-status-available" />
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
-          })
-        )}
+              );
+            })
+          )}
+        </div>
       </div>
     </div>
   );

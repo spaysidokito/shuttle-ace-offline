@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Plus, Play, Square, Users, User } from 'lucide-react';
+import { Plus, Play, Square, Users, User, Zap, Trash2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 function StatusBadge({ status }: { status: Court['status'] }) {
@@ -20,7 +20,7 @@ function StatusBadge({ status }: { status: Court['status'] }) {
 }
 
 function CourtCard({ court }: { court: Court }) {
-  const { players, startMatch, endMatch, getActiveMatchForCourt, getNextPlayersForMatch, settings, refreshAll } = useApp();
+  const { players, startMatch, endMatch, getActiveMatchForCourt, getNextPlayersForMatch, settings, refreshAll, deleteCourt } = useApp();
   const [activeMatch, setActiveMatch] = useState<Match | null>(null);
   const [showAssign, setShowAssign] = useState(false);
   const [showEndMatch, setShowEndMatch] = useState(false);
@@ -81,6 +81,18 @@ function CourtCard({ court }: { court: Court }) {
           <div className="flex items-center gap-2">
             {court.matchType === 'doubles' ? <Users className="h-4 w-4 text-muted-foreground" /> : <User className="h-4 w-4 text-muted-foreground" />}
             <StatusBadge status={court.status} />
+            <Button
+              variant="destructive"
+              size="icon"
+              className="h-8 w-8 p-0"
+              onClick={() => {
+                if (confirm(`Delete ${court.name}? This cannot be undone.`)) {
+                  deleteCourt(court.id);
+                }
+              }}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
           </div>
         </div>
 
@@ -195,9 +207,6 @@ function CourtCard({ court }: { court: Court }) {
     </>
   );
 }
-
-// Need to import Zap for auto-select button
-import { Zap } from 'lucide-react';
 
 export default function CourtDashboard() {
   const { courts, addCourt, queue, players } = useApp();

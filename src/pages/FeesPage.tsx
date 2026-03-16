@@ -6,9 +6,11 @@ export default function FeesPage() {
   const { players, settings, updatePlayer } = useApp();
 
   const playersWithFees = players.filter(p => p.feeOwed > 0 || p.feePaid > 0);
+  const totalPlayers = players.length;
   const totalOwed = players.reduce((sum, p) => sum + p.feeOwed, 0);
   const totalPaid = players.reduce((sum, p) => sum + p.feePaid, 0);
   const outstanding = totalOwed - totalPaid;
+  const outstandingPerPlayer = totalPlayers > 0 ? outstanding / totalPlayers : 0;
 
   const markPaid = async (p: typeof players[0]) => {
     await updatePlayer({ ...p, feePaid: p.feeOwed });
@@ -59,6 +61,13 @@ export default function FeesPage() {
             <AlertCircle className="h-4 w-4" /> OUTSTANDING
           </div>
           <span className="font-display text-3xl font-bold text-status-waiting">{settings.currency}{outstanding.toLocaleString()}</span>
+        </div>
+        <div className="rounded-lg border border-border bg-card p-5">
+          <div className="flex items-center gap-2 text-status-waiting text-xs font-display tracking-wider mb-2">
+            <DollarSign className="h-4 w-4" /> OUTSTANDING/PLAYER
+          </div>
+          <span className="font-display text-3xl font-bold text-status-waiting">{settings.currency}{outstandingPerPlayer.toFixed(2)}</span>
+          <p className="text-xs text-muted-foreground mt-1">{totalPlayers || 0} players used for split</p>
         </div>
       </div>
 

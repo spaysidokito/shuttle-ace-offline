@@ -19,6 +19,7 @@ export interface Court {
   status: 'available' | 'playing' | 'waiting';
   players: string[]; // player IDs
   matchType: 'singles' | 'doubles';
+  sessionFeeApplied?: boolean;
 }
 
 export interface Match {

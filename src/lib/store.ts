@@ -130,19 +130,26 @@ export async function startMatch(courtId: string, playerIds: string[], matchType
 
   // Update court
   const court = await db.get('courts', courtId);
+  const shouldApplyCourtFee = court && !court.sessionFeeApplied;
+
   if (court) {
     court.status = 'playing';
     court.players = playerIds;
     court.matchType = matchType;
+    if (shouldApplyCourtFee) {
+      court.sessionFeeApplied = true;
+    }
     await db.put('courts', court);
   }
 
-  // Apply court fee share at start (reservation-based) and mark players as playing
+  // Apply court fee share at start (reservation-based) only once per court session
   for (const pid of playerIds) {
     const p = await db.get('players', pid);
     if (p) {
       p.status = 'playing';
-      p.feeOwed += courtFeeShare;
+      if (shouldApplyCourtFee) {
+        p.feeOwed += courtFeeShare;
+      }
       await db.put('players', p);
     }
     await removeFromQueue(pid);
@@ -189,6 +196,7 @@ export async function endMatch(matchId: string, winnerIds: string[]): Promise<vo
   if (court) {
     court.status = 'available';
     court.players = [];
+    // keep sessionFeeApplied true until a global reset is done
     await db.put('courts', court);
   }
 }

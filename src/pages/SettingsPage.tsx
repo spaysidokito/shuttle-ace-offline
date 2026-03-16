@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
 import { Button } from '@/components/ui/button';
@@ -13,6 +13,10 @@ export default function SettingsPage() {
   const { settings, updateSettings, resetAll } = useApp();
   const [form, setForm] = useState(settings);
   const [showReset, setShowReset] = useState(false);
+
+  useEffect(() => {
+    setForm(settings);
+  }, [settings]);
 
   const handleSave = async () => {
     await updateSettings(form);

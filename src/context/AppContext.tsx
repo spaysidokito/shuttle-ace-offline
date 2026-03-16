@@ -101,6 +101,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     getActiveMatchForCourt: getActiveMatch,
     updateSettings: async (s) => {
       await dbUpdateSettings(s);
+      setSettings(s); // update context immediately
       await initializeCourts(s.numberOfCourts);
       await refreshAll();
     },

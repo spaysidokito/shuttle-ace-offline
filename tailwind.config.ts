@@ -91,6 +91,12 @@ export default {
         "accordion-up": "accordion-up 0.2s ease-out",
         "pulse-scale": "pulse-scale 0.2s ease-in-out",
       },
+      boxShadow: {
+        'elevation-1': '0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.5)',
+        'elevation-2': '0 3px 6px rgba(0,0,0,0.45), 0 2px 4px rgba(0,0,0,0.5)',
+        'elevation-3': '0 8px 24px rgba(0,0,0,0.5), 0 4px 8px rgba(0,0,0,0.4)',
+        'elevation-4': '0 16px 40px rgba(0,0,0,0.55), 0 8px 16px rgba(0,0,0,0.4)',
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

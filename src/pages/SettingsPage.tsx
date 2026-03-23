@@ -40,16 +40,16 @@ export default function SettingsPage() {
   return (
     <div className="max-w-xl">
       <div className="mb-6">
-        <h1 className="text-2xl md:text-3xl font-bold">Settings</h1>
-        <p className="text-sm text-muted-foreground mt-1">Configure your court management system</p>
+        <h1 className="text-2xl md:text-3xl font-display tracking-widest text-gradient">Settings</h1>
+        <p className="text-xs text-muted-foreground mt-1.5 tracking-wide">Configure your court management system</p>
       </div>
 
       <div className="space-y-6">
         {/* Match Type */}
-        <div>
-          <label className="text-sm font-medium mb-2 block">Default Match Type</label>
+        <div className="rounded-xl border border-border/50 bg-card p-5 elevation-1">
+          <label className="text-xs font-display tracking-widest text-muted-foreground mb-3 block">Default Match Type</label>
           <Select value={form.matchTypeDefault} onValueChange={v => setForm({ ...form, matchTypeDefault: v as 'singles' | 'doubles' })}>
-            <SelectTrigger className="h-11"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="h-11 bg-secondary/40 border-border/50"><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="singles">Singles</SelectItem>
               <SelectItem value="doubles">Doubles</SelectItem>
@@ -58,79 +58,54 @@ export default function SettingsPage() {
         </div>
 
         {/* Number of Courts */}
-        <div>
-          <label className="text-sm font-medium mb-2 block">Number of Courts</label>
+        <div className="rounded-xl border border-border/50 bg-card p-5 elevation-1">
+          <label className="text-xs font-display tracking-widest text-muted-foreground mb-3 block">Number of Courts</label>
           <Input
             type="number"
             min={1}
             max={20}
             value={form.numberOfCourts}
             onChange={e => setForm({ ...form, numberOfCourts: Number(e.target.value) })}
-            className="h-11"
+            className="h-11 bg-secondary/40 border-border/50"
           />
         </div>
 
         {/* Fee Settings */}
-        <div className="border-t border-border pt-6">
-          <h2 className="font-display text-lg tracking-wider mb-4">Fee Configuration</h2>
+        <div className="rounded-xl border border-border/50 bg-card p-5 elevation-1">
+          <h2 className="font-display text-sm tracking-widest text-muted-foreground mb-4">Fee Configuration</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="text-sm text-muted-foreground mb-1 block">Singles Shuttle Fee ({form.currency})</label>
-              <Input
-                type="number"
-                min={0}
-                value={form.singlesShuttleFee}
-                onChange={e => setForm({ ...form, singlesShuttleFee: Number(e.target.value) })}
-                className="h-11"
-              />
+              <label className="text-xs text-muted-foreground mb-2 block">Singles Shuttle Fee ({form.currency})</label>
+              <Input type="number" min={0} value={form.singlesShuttleFee} onChange={e => setForm({ ...form, singlesShuttleFee: Number(e.target.value) })} className="h-11 bg-secondary/40 border-border/50" />
             </div>
             <div>
-              <label className="text-sm text-muted-foreground mb-1 block">Doubles Shuttle Fee ({form.currency})</label>
-              <Input
-                type="number"
-                min={0}
-                value={form.doublesShuttleFee}
-                onChange={e => setForm({ ...form, doublesShuttleFee: Number(e.target.value) })}
-                className="h-11"
-              />
+              <label className="text-xs text-muted-foreground mb-2 block">Doubles Shuttle Fee ({form.currency})</label>
+              <Input type="number" min={0} value={form.doublesShuttleFee} onChange={e => setForm({ ...form, doublesShuttleFee: Number(e.target.value) })} className="h-11 bg-secondary/40 border-border/50" />
             </div>
             <div>
-              <label className="text-sm text-muted-foreground mb-1 block">Court Fee (total per match) ({form.currency})</label>
-              <Input
-                type="number"
-                min={0}
-                value={form.courtFeePerPlayer}
-                onChange={e => setForm({ ...form, courtFeePerPlayer: Number(e.target.value) })}
-                className="h-11"
-              />
+              <label className="text-xs text-muted-foreground mb-2 block">Court Fee (total per match) ({form.currency})</label>
+              <Input type="number" min={0} value={form.courtFeePerPlayer} onChange={e => setForm({ ...form, courtFeePerPlayer: Number(e.target.value) })} className="h-11 bg-secondary/40 border-border/50" />
             </div>
-            <div className="sm:col-span-2 flex items-center gap-3">
-              <Switch
-                checked={form.includeShuttleFee}
-                onCheckedChange={checked => setForm({ ...form, includeShuttleFee: checked })}
-              />
-              <span className="text-sm">Include shuttle fee in billing (uncheck if players bring their own shuttle)</span>
+            <div className="sm:col-span-2 flex items-center gap-3 py-1">
+              <Switch checked={form.includeShuttleFee} onCheckedChange={checked => setForm({ ...form, includeShuttleFee: checked })} />
+              <span className="text-sm text-muted-foreground">Include shuttle fee in billing</span>
             </div>
             <div>
-              <label className="text-sm text-muted-foreground mb-1 block">Currency Symbol</label>
-              <Input
-                value={form.currency}
-                onChange={e => setForm({ ...form, currency: e.target.value })}
-                className="h-11"
-              />
+              <label className="text-xs text-muted-foreground mb-2 block">Currency Symbol</label>
+              <Input value={form.currency} onChange={e => setForm({ ...form, currency: e.target.value })} className="h-11 bg-secondary/40 border-border/50" />
             </div>
           </div>
         </div>
 
-        <Button onClick={handleSave} className="w-full h-12 font-display tracking-wider text-base">
+        <Button onClick={handleSave} className="w-full h-12 font-display tracking-widest text-sm elevation-1 hover:elevation-2 transition-all">
           Save Settings
         </Button>
 
         {/* Danger Zone */}
-        <div className="border-t border-destructive/30 pt-6 mt-8">
-          <h2 className="font-display text-lg tracking-wider text-destructive mb-2">Danger Zone</h2>
-          <p className="text-sm text-muted-foreground mb-4">This will permanently delete all players, matches, and fee data.</p>
-          <Button variant="destructive" onClick={() => setShowReset(true)} className="h-11 font-display tracking-wider">
+        <div className="rounded-xl border border-destructive/20 bg-destructive/5 p-5 mt-4">
+          <h2 className="font-display text-sm tracking-widest text-destructive mb-2">Danger Zone</h2>
+          <p className="text-xs text-muted-foreground mb-4">This will permanently delete all players, matches, and fee data.</p>
+          <Button variant="destructive" onClick={() => setShowReset(true)} className="h-10 font-display tracking-widest text-xs">
             <AlertTriangle className="mr-2 h-4 w-4" /> Reset All Data
           </Button>
         </div>

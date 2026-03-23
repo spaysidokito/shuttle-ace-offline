@@ -34,45 +34,45 @@ export default function FeesPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold">Fee Management</h1>
-          <p className="text-sm text-muted-foreground mt-1">Track and manage player fees</p>
+          <h1 className="text-2xl md:text-3xl font-display tracking-widest text-gradient">Fee Management</h1>
+          <p className="text-xs text-muted-foreground mt-1.5 tracking-wide">Track and manage player fees</p>
         </div>
-        <Button variant="secondary" onClick={exportCSV} className="h-11 font-display tracking-wider">
+        <Button variant="outline" onClick={exportCSV} className="h-10 font-display tracking-widest text-xs border-border/60 hover:border-primary/40 hover:bg-primary/10 hover:text-primary transition-all">
           <Download className="mr-2 h-4 w-4" /> Export CSV
         </Button>
       </div>
 
       {/* Summary cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-        <div className="rounded-lg border border-border bg-card p-5">
-          <div className="flex items-center gap-2 text-muted-foreground text-xs font-display tracking-wider mb-2">
-            <DollarSign className="h-4 w-4" /> TOTAL OWED
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="rounded-xl border border-border/50 bg-card p-5 elevation-2 hover:elevation-3 transition-all">
+          <div className="flex items-center gap-2 text-muted-foreground text-[11px] font-display tracking-widest mb-3">
+            <DollarSign className="h-3.5 w-3.5" /> TOTAL OWED
           </div>
           <span className="font-display text-3xl font-bold">{settings.currency}{totalOwed.toLocaleString()}</span>
         </div>
-        <div className="rounded-lg border border-border bg-card p-5">
-          <div className="flex items-center gap-2 text-status-available text-xs font-display tracking-wider mb-2">
-            <CheckCircle className="h-4 w-4" /> COLLECTED
+        <div className="rounded-xl border border-status-available/20 bg-card p-5 elevation-2 hover:elevation-3 transition-all">
+          <div className="flex items-center gap-2 text-status-available text-[11px] font-display tracking-widest mb-3">
+            <CheckCircle className="h-3.5 w-3.5" /> COLLECTED
           </div>
           <span className="font-display text-3xl font-bold text-status-available">{settings.currency}{totalPaid.toLocaleString()}</span>
         </div>
-        <div className="rounded-lg border border-border bg-card p-5">
-          <div className="flex items-center gap-2 text-status-waiting text-xs font-display tracking-wider mb-2">
-            <AlertCircle className="h-4 w-4" /> OUTSTANDING
+        <div className="rounded-xl border border-status-waiting/20 bg-card p-5 elevation-2 hover:elevation-3 transition-all">
+          <div className="flex items-center gap-2 text-status-waiting text-[11px] font-display tracking-widest mb-3">
+            <AlertCircle className="h-3.5 w-3.5" /> OUTSTANDING
           </div>
           <span className="font-display text-3xl font-bold text-status-waiting">{settings.currency}{outstanding.toLocaleString()}</span>
         </div>
-        <div className="rounded-lg border border-border bg-card p-5">
-          <div className="flex items-center gap-2 text-status-waiting text-xs font-display tracking-wider mb-2">
-            <DollarSign className="h-4 w-4" /> OUTSTANDING/MATCH
+        <div className="rounded-xl border border-border/50 bg-card p-5 elevation-2 hover:elevation-3 transition-all">
+          <div className="flex items-center gap-2 text-muted-foreground text-[11px] font-display tracking-widest mb-3">
+            <DollarSign className="h-3.5 w-3.5" /> PER MATCH
           </div>
-          <span className="font-display text-3xl font-bold text-status-waiting">{settings.currency}{outstandingPerMatch.toFixed(2)}</span>
-          <p className="text-xs text-muted-foreground mt-1">{totalMatches || 0} matches considered</p>
+          <span className="font-display text-3xl font-bold">{settings.currency}{outstandingPerMatch.toFixed(2)}</span>
+          <p className="text-[10px] text-muted-foreground mt-1">{totalMatches || 0} matches</p>
         </div>
       </div>
 
       {/* Fee config info */}
-      <div className="flex flex-wrap gap-4 mb-6 text-sm text-muted-foreground">
+      <div className="flex flex-wrap gap-4 mb-6 text-xs text-muted-foreground font-body">
         <span>Singles Shuttle: <strong className="text-foreground">{settings.currency}{settings.singlesShuttleFee}</strong></span>
         <span>Doubles Shuttle: <strong className="text-foreground">{settings.currency}{settings.doublesShuttleFee}</strong></span>
         <span>Court Fee/Match: <strong className="text-foreground">{settings.currency}{settings.courtFeePerPlayer}</strong></span>
@@ -80,42 +80,40 @@ export default function FeesPage() {
       </div>
 
       {/* Player fees table */}
-      <div className="rounded-lg border border-border overflow-hidden">
-        <div className="overflow-x-auto">
-          <div className="grid grid-cols-[1fr_100px_100px_100px_100px] gap-2 px-4 py-3 bg-secondary/50 text-xs font-display tracking-wider text-muted-foreground">
-            <span>Player</span>
-            <span className="text-center">Owed</span>
-            <span className="text-center">Paid</span>
-            <span className="text-center">Balance</span>
-            <span className="text-center">Action</span>
-          </div>
-          {playersWithFees.length === 0 ? (
-            <div className="text-center py-12 text-muted-foreground text-sm">No fees recorded yet</div>
-          ) : (
-            playersWithFees.map((p, i) => {
-              const balance = p.feeOwed - p.feePaid;
-              return (
-                <div key={p.id} className={`grid grid-cols-[1fr_100px_100px_100px_100px] gap-2 px-4 py-3 items-center min-h-[52px] ${i % 2 === 0 ? 'bg-card' : 'bg-card/50'} border-t border-border`}>
-                  <span className="font-medium text-sm truncate">{p.name}</span>
-                  <span className="text-center text-sm">{settings.currency}{p.feeOwed}</span>
-                  <span className="text-center text-sm text-status-available">{settings.currency}{p.feePaid}</span>
-                  <span className={`text-center text-sm font-semibold ${balance > 0 ? 'text-status-waiting' : 'text-status-available'}`}>
-                    {settings.currency}{balance}
-                  </span>
-                  <div className="flex justify-center">
-                    {balance > 0 ? (
-                      <Button size="sm" variant="secondary" className="h-9 font-display tracking-wider text-xs" onClick={() => markPaid(p)}>
-                        Mark Paid
-                      </Button>
-                    ) : (
-                      <CheckCircle className="h-5 w-5 text-status-available" />
-                    )}
-                  </div>
-                </div>
-              );
-            })
-          )}
+      <div className="rounded-xl border border-border/50 overflow-hidden elevation-1">
+        <div className="grid grid-cols-[1fr_100px_100px_100px_100px] gap-2 px-4 py-3 bg-secondary/60 text-[11px] font-display tracking-widest text-muted-foreground border-b border-border/50">
+          <span>Player</span>
+          <span className="text-center">Owed</span>
+          <span className="text-center">Paid</span>
+          <span className="text-center">Balance</span>
+          <span className="text-center">Action</span>
         </div>
+        {playersWithFees.length === 0 ? (
+          <div className="text-center py-14 text-muted-foreground text-sm">No fees recorded yet</div>
+        ) : (
+          playersWithFees.map((p, i) => {
+            const balance = p.feeOwed - p.feePaid;
+            return (
+              <div key={p.id} className={`grid grid-cols-[1fr_100px_100px_100px_100px] gap-2 px-4 py-3 items-center min-h-[52px] border-t border-border/30 hover:bg-accent/40 transition-colors ${i % 2 === 0 ? 'bg-card' : 'bg-card/60'}`}>
+                <span className="font-medium text-sm truncate">{p.name}</span>
+                <span className="text-center text-sm">{settings.currency}{p.feeOwed}</span>
+                <span className="text-center text-sm text-status-available font-semibold">{settings.currency}{p.feePaid}</span>
+                <span className={`text-center text-sm font-display font-bold ${balance > 0 ? 'text-status-waiting' : 'text-status-available'}`}>
+                  {settings.currency}{balance}
+                </span>
+                <div className="flex justify-center">
+                  {balance > 0 ? (
+                    <Button size="sm" variant="outline" className="h-8 font-display tracking-widest text-[11px] border-border/50 hover:border-status-available/40 hover:text-status-available hover:bg-status-available/10 transition-all" onClick={() => markPaid(p)}>
+                      Mark Paid
+                    </Button>
+                  ) : (
+                    <CheckCircle className="h-5 w-5 text-status-available" />
+                  )}
+                </div>
+              </div>
+            );
+          })
+        )}
       </div>
     </div>
   );

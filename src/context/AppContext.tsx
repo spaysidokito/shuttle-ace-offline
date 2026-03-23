@@ -7,8 +7,9 @@ import {
   getActiveMatch, getSettings, updateSettings as dbUpdateSettings,
   getQueue, addToQueue as dbAddToQueue, removeFromQueue as dbRemoveFromQueue,
   getNextPlayers, resetAllData,
+  getAllSessions, createSession as dbCreateSession, closeSession as dbCloseSession, joinSession as dbJoinSession,
 } from '@/lib/store';
-import { type Player, type Court, type Match, type Settings, DEFAULT_SETTINGS, generateId } from '@/lib/db';
+import { type Player, type Court, type Match, type Settings, type GameSession, DEFAULT_SETTINGS, generateId } from '@/lib/db';
 
 interface AppContextType {
   players: Player[];
@@ -16,9 +17,10 @@ interface AppContextType {
   matches: Match[];
   settings: Settings;
   queue: { id: string; playerId: string; addedAt: number }[];
+  sessions: GameSession[];
   loading: boolean;
   refreshAll: () => Promise<void>;
-  addPlayer: (name: string) => Promise<void>;
+  addPlayer: (name: string, accountId?: string | null) => Promise<void>;
   updatePlayer: (player: Player) => Promise<void>;
   deletePlayer: (id: string) => Promise<void>;
   updateCourt: (court: Court) => Promise<void>;
@@ -32,6 +34,9 @@ interface AppContextType {
   addPlayerToQueue: (playerId: string) => Promise<void>;
   removePlayerFromQueue: (playerId: string) => Promise<void>;
   resetAll: () => Promise<void>;
+  createSession: (name: string) => Promise<GameSession>;
+  closeSession: (id: string) => Promise<void>;
+  joinSession: (code: string, playerId: string) => Promise<GameSession | null>;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -48,17 +53,19 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [matches, setMatches] = useState<Match[]>([]);
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
   const [queue, setQueue] = useState<{ id: string; playerId: string; addedAt: number }[]>([]);
+  const [sessions, setSessions] = useState<GameSession[]>([]);
   const [loading, setLoading] = useState(true);
 
   const refreshAll = useCallback(async () => {
-    const [p, c, m, s, q] = await Promise.all([
-      getAllPlayers(), getAllCourts(), getAllMatches(), getSettings(), getQueue(),
+    const [p, c, m, s, q, sess] = await Promise.all([
+      getAllPlayers(), getAllCourts(), getAllMatches(), getSettings(), getQueue(), getAllSessions(),
     ]);
     setPlayers(p);
     setCourts(c);
     setMatches(m);
     setSettings(s);
     setQueue(q);
+    setSessions(sess);
   }, []);
 
   useEffect(() => {
@@ -72,43 +79,28 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, [refreshAll]);
 
   const value: AppContextType = {
-    players, courts, matches, settings, queue, loading, refreshAll,
-    addPlayer: async (name) => { await dbAddPlayer(name); await refreshAll(); },
+    players, courts, matches, settings, queue, sessions, loading, refreshAll,
+    addPlayer: async (name, accountId = null) => { await dbAddPlayer(name, accountId); await refreshAll(); },
     updatePlayer: async (p) => { await dbUpdatePlayer(p); await refreshAll(); },
     deletePlayer: async (id) => { await dbDeletePlayer(id); await refreshAll(); },
     updateCourt: async (c) => { await dbUpdateCourt(c); await refreshAll(); },
     deleteCourt: async (id) => { await dbDeleteCourt(id); await refreshAll(); },
     addCourt: async () => {
       const existing = await getAllCourts();
-      const court: Court = {
-        id: generateId(),
-        name: `Court ${existing.length + 1}`,
-        status: 'available',
-        players: [],
-        matchType: settings.matchTypeDefault,
-      };
-      await dbUpdateCourt(court);
+      await dbUpdateCourt({ id: generateId(), name: `Court ${existing.length + 1}`, status: 'available', players: [], matchType: settings.matchTypeDefault });
       await refreshAll();
     },
-    startMatch: async (courtId, playerIds, matchType) => {
-      await dbStartMatch(courtId, playerIds, matchType);
-      await refreshAll();
-    },
-    endMatch: async (matchId, winnerIds) => {
-      await dbEndMatch(matchId, winnerIds);
-      await refreshAll();
-    },
+    startMatch: async (courtId, playerIds, matchType) => { await dbStartMatch(courtId, playerIds, matchType); await refreshAll(); },
+    endMatch: async (matchId, winnerIds) => { await dbEndMatch(matchId, winnerIds); await refreshAll(); },
     getActiveMatchForCourt: getActiveMatch,
-    updateSettings: async (s) => {
-      await dbUpdateSettings(s);
-      setSettings(s); // update context immediately
-      await initializeCourts(s.numberOfCourts);
-      await refreshAll();
-    },
+    updateSettings: async (s) => { await dbUpdateSettings(s); setSettings(s); await initializeCourts(s.numberOfCourts); await refreshAll(); },
     getNextPlayersForMatch: getNextPlayers,
     addPlayerToQueue: async (pid) => { await dbAddToQueue(pid); await refreshAll(); },
     removePlayerFromQueue: async (pid) => { await dbRemoveFromQueue(pid); await refreshAll(); },
     resetAll: async () => { await resetAllData(); await initializeCourts(DEFAULT_SETTINGS.numberOfCourts); await refreshAll(); },
+    createSession: async (name) => { const s = await dbCreateSession(name); await refreshAll(); return s; },
+    closeSession: async (id) => { await dbCloseSession(id); await refreshAll(); },
+    joinSession: async (code, playerId) => { const s = await dbJoinSession(code, playerId); await refreshAll(); return s; },
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

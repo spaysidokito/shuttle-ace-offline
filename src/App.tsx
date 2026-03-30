@@ -65,13 +65,13 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Sonner />
-      <AuthProvider>
-        <AppProvider>
-          <HashRouter>
+      <HashRouter>
+        <AuthProvider>
+          <AppProvider>
             <AppRoutes />
-          </HashRouter>
-        </AppProvider>
-      </AuthProvider>
+          </AppProvider>
+        </AuthProvider>
+      </HashRouter>
     </TooltipProvider>
   </QueryClientProvider>
 );

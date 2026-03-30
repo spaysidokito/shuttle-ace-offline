@@ -1,4 +1,4 @@
-import { LayoutGrid, Users, Trophy, DollarSign, Settings, Zap, CalendarDays } from 'lucide-react';
+import { LayoutGrid, Users, Trophy, DollarSign, Settings, CalendarDays } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent,
@@ -14,42 +14,59 @@ const items = [
   { title: 'Settings', url: '/settings', icon: Settings },
 ];
 
+function RallyQLogo() {
+  return (
+    <svg viewBox="0 0 32 32" fill="none" className="h-7 w-7">
+      {/* Racket */}
+      <ellipse cx="11" cy="11" rx="7" ry="7" stroke="currentColor" strokeWidth="1.5" fill="none" opacity="0.9"/>
+      <line x1="11" y1="8" x2="11" y2="14" stroke="currentColor" strokeWidth="0.8" opacity="0.6"/>
+      <line x1="8" y1="11" x2="14" y2="11" stroke="currentColor" strokeWidth="0.8" opacity="0.6"/>
+      <line x1="9" y1="9" x2="13" y2="13" stroke="currentColor" strokeWidth="0.8" opacity="0.5"/>
+      <line x1="13" y1="9" x2="9" y2="13" stroke="currentColor" strokeWidth="0.8" opacity="0.5"/>
+      <path d="M15 15L19 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+      
+      {/* Shuttlecock */}
+      <path d="M24 8L21 12L24 13.5L27 12L24 8Z" fill="currentColor" opacity="0.9"/>
+      <path d="M21 12L20 15L24 13.5L21 12Z" fill="currentColor" opacity="0.7"/>
+      <path d="M27 12L28 15L24 13.5L27 12Z" fill="currentColor" opacity="0.7"/>
+      <ellipse cx="24" cy="17" rx="2" ry="2.5" fill="currentColor"/>
+    </svg>
+  );
+}
+
 export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === 'collapsed';
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-sidebar-border elevation-2">
+    <Sidebar collapsible="icon" className="border-r border-sidebar-border">
       <SidebarContent>
-        <div className={`flex items-center gap-3 px-4 py-5 border-b border-sidebar-border ${collapsed ? 'justify-center' : ''}`}>
-          <div className="relative shrink-0">
-            <div className="absolute inset-0 bg-primary/30 rounded-lg blur-md" />
-            <div className="relative bg-primary/20 border border-primary/40 rounded-lg p-1.5">
-              <Zap className="h-5 w-5 text-primary" />
-            </div>
+        <div className={`flex items-center gap-3 px-4 py-6 border-b border-sidebar-border ${collapsed ? 'justify-center' : ''}`}>
+          <div className="text-primary shrink-0">
+            <RallyQLogo />
           </div>
           {!collapsed && (
             <div className="flex flex-col">
-              <span className="font-display text-xl tracking-widest text-foreground leading-none">RallyQ</span>
-              <span className="text-[10px] text-muted-foreground tracking-widest uppercase mt-0.5">Admin</span>
+              <span className="font-bold text-xl tracking-tight">RallyQ</span>
+              <span className="text-xs text-muted-foreground font-medium">Queue Management</span>
             </div>
           )}
         </div>
 
-        <SidebarGroup className="pt-3">
+        <SidebarGroup className="pt-4">
           <SidebarGroupContent>
-            <SidebarMenu className="gap-1 px-2">
+            <SidebarMenu className="gap-1 px-3">
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild className="h-11 p-0">
+                  <SidebarMenuButton asChild>
                     <NavLink
                       to={item.url}
                       end={item.url === '/'}
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-muted-foreground hover:bg-sidebar-accent hover:text-foreground transition-all duration-200 group"
-                      activeClassName="bg-primary/15 text-primary border border-primary/20 elevation-1"
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-muted-foreground hover:bg-sidebar-accent hover:text-foreground transition-colors font-medium"
+                      activeClassName="bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground"
                     >
-                      <item.icon className="h-4 w-4 shrink-0 transition-transform duration-200 group-hover:scale-110" />
-                      {!collapsed && <span className="text-sm font-body font-medium tracking-wide">{item.title}</span>}
+                      <item.icon className="h-5 w-5 shrink-0" />
+                      {!collapsed && <span className="text-sm">{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

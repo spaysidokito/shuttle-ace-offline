@@ -1,4 +1,4 @@
-import { getDB, generateId, generateJoinCode, DEFAULT_SETTINGS, ACHIEVEMENTS, type Player, type Court, type Match, type Settings, type Account, type GameSession } from './db';
+import { getDB, resetDBCache, generateId, generateJoinCode, DEFAULT_SETTINGS, ACHIEVEMENTS, type Player, type Court, type Match, type Settings, type Account, type GameSession } from './db';
 
 // ── Players ──
 export async function getAllPlayers(): Promise<Player[]> {
@@ -303,7 +303,6 @@ export async function getSession(id: string): Promise<GameSession | undefined> {
 export async function getSessionByCode(code: string): Promise<GameSession | undefined> {
   const db = await getDB();
   const all = await db.getAll('sessions');
-  console.log('[RallyQ] getSessionByCode lookup:', code.toUpperCase(), '| stored sessions:', all.map(s => ({ code: s.joinCode, status: s.status })));
   return all.find(s => s.joinCode === code.toUpperCase() && s.status === 'active');
 }
 
@@ -336,18 +335,22 @@ export async function closeSession(id: string): Promise<void> {
   await db.put('sessions', s);
 }
 
-export async function joinSession(code: string, playerId: string): Promise<GameSession | null> {
-  const session = await getSessionByCode(code);
-  console.log('[RallyQ] joinSession result for code', code, ':', session ?? 'NOT FOUND');
-  if (!session) return null;
-  if (!session.playerIds.includes(playerId)) {
-    session.playerIds.push(playerId);
-    const db = await getDB();
-    await db.put('sessions', session);
+export async function joinSession(code: string, playerId: string): Promise<GameSession | { error: string } | null> {
+  // Force fresh DB connection so we see data written by other tabs
+  resetDBCache();
+  const db = await getDB();
+  const all = await db.getAll('sessions');
+  const normalized = code.toUpperCase();
+  console.log('[DEBUG] joinSession - code:', normalized, '| all sessions:', all.map(s => ({ code: s.joinCode, status: s.status })));
+  const match = all.find(s => s.joinCode === normalized);
+  if (!match) return null;
+  if (match.status !== 'active') return { error: 'This session has been closed.' };
+  if (!match.playerIds.includes(playerId)) {
+    match.playerIds.push(playerId);
+    await db.put('sessions', match);
   }
-  // Add to queue
   await addToQueue(playerId);
-  return session;
+  return match;
 }
 
 // ── Reset ──

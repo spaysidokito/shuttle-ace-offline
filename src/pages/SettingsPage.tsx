@@ -73,27 +73,66 @@ export default function SettingsPage() {
         {/* Fee Settings */}
         <div className="rounded-xl border border-border/50 bg-card p-5 elevation-1">
           <h2 className="font-display text-sm tracking-widest text-muted-foreground mb-4">Fee Configuration</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="text-xs text-muted-foreground mb-2 block">Singles Shuttle Fee ({form.currency})</label>
-              <Input type="number" min={0} value={form.singlesShuttleFee} onChange={e => setForm({ ...form, singlesShuttleFee: Number(e.target.value) })} className="h-11 bg-secondary/40 border-border/50" />
+          
+          <div className="mb-4">
+            <label className="text-xs text-muted-foreground mb-2 block">Fee Calculation Mode</label>
+            <Select value={form.feeCalculationMode} onValueChange={v => setForm({ ...form, feeCalculationMode: v as 'per-player' | 'per-game-split' })}>
+              <SelectTrigger className="h-11 bg-secondary/40 border-border/50"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="per-player">Per Player (Fixed fee per match)</SelectItem>
+                <SelectItem value="per-game-split">Equal Split (Total fees ÷ all players)</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground mt-2">
+              {form.feeCalculationMode === 'per-player' 
+                ? 'Each player pays a fixed fee per match they play'
+                : 'Total session costs are divided equally among all players who joined'}
+            </p>
+          </div>
+
+          {form.feeCalculationMode === 'per-game-split' ? (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label className="text-xs text-muted-foreground mb-2 block">Total Court Fee ({form.currency})</label>
+                  <Input type="number" min={0} value={form.totalCourtFee} onChange={e => setForm({ ...form, totalCourtFee: Number(e.target.value) })} className="h-11 bg-secondary/40 border-border/50" />
+                  <p className="text-xs text-muted-foreground mt-1">Total court rental for the session</p>
+                </div>
+                <div>
+                  <label className="text-xs text-muted-foreground mb-2 block">Total Shuttle Fee ({form.currency})</label>
+                  <Input type="number" min={0} value={form.totalShuttleFee} onChange={e => setForm({ ...form, totalShuttleFee: Number(e.target.value) })} className="h-11 bg-secondary/40 border-border/50" />
+                  <p className="text-xs text-muted-foreground mt-1">Total shuttle cost for the session</p>
+                </div>
+              </div>
+              <div className="sm:col-span-2 flex items-center gap-3 py-1 mb-4">
+                <Switch checked={form.includeShuttleFee} onCheckedChange={checked => setForm({ ...form, includeShuttleFee: checked })} />
+                <span className="text-sm text-muted-foreground">Include shuttle fee in billing</span>
+              </div>
+            </>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="text-xs text-muted-foreground mb-2 block">Singles Shuttle Fee ({form.currency})</label>
+                <Input type="number" min={0} value={form.singlesShuttleFee} onChange={e => setForm({ ...form, singlesShuttleFee: Number(e.target.value) })} className="h-11 bg-secondary/40 border-border/50" />
+              </div>
+              <div>
+                <label className="text-xs text-muted-foreground mb-2 block">Doubles Shuttle Fee ({form.currency})</label>
+                <Input type="number" min={0} value={form.doublesShuttleFee} onChange={e => setForm({ ...form, doublesShuttleFee: Number(e.target.value) })} className="h-11 bg-secondary/40 border-border/50" />
+              </div>
+              <div>
+                <label className="text-xs text-muted-foreground mb-2 block">Court Fee (total per match) ({form.currency})</label>
+                <Input type="number" min={0} value={form.courtFeePerPlayer} onChange={e => setForm({ ...form, courtFeePerPlayer: Number(e.target.value) })} className="h-11 bg-secondary/40 border-border/50" />
+              </div>
+              <div className="sm:col-span-2 flex items-center gap-3 py-1">
+                <Switch checked={form.includeShuttleFee} onCheckedChange={checked => setForm({ ...form, includeShuttleFee: checked })} />
+                <span className="text-sm text-muted-foreground">Include shuttle fee in billing</span>
+              </div>
             </div>
-            <div>
-              <label className="text-xs text-muted-foreground mb-2 block">Doubles Shuttle Fee ({form.currency})</label>
-              <Input type="number" min={0} value={form.doublesShuttleFee} onChange={e => setForm({ ...form, doublesShuttleFee: Number(e.target.value) })} className="h-11 bg-secondary/40 border-border/50" />
-            </div>
-            <div>
-              <label className="text-xs text-muted-foreground mb-2 block">Court Fee (total per match) ({form.currency})</label>
-              <Input type="number" min={0} value={form.courtFeePerPlayer} onChange={e => setForm({ ...form, courtFeePerPlayer: Number(e.target.value) })} className="h-11 bg-secondary/40 border-border/50" />
-            </div>
-            <div className="sm:col-span-2 flex items-center gap-3 py-1">
-              <Switch checked={form.includeShuttleFee} onCheckedChange={checked => setForm({ ...form, includeShuttleFee: checked })} />
-              <span className="text-sm text-muted-foreground">Include shuttle fee in billing</span>
-            </div>
-            <div>
-              <label className="text-xs text-muted-foreground mb-2 block">Currency Symbol</label>
-              <Input value={form.currency} onChange={e => setForm({ ...form, currency: e.target.value })} className="h-11 bg-secondary/40 border-border/50" />
-            </div>
+          )}
+          
+          <div>
+            <label className="text-xs text-muted-foreground mb-2 block">Currency Symbol</label>
+            <Input value={form.currency} onChange={e => setForm({ ...form, currency: e.target.value })} className="h-11 bg-secondary/40 border-border/50" />
           </div>
         </div>
 

@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Hash, CheckCircle, Users, LogOut } from 'lucide-react';
 import { toast } from 'sonner';
-import { addPlayer as dbAddPlayer, updateAccount } from '@/lib/store';
+import { addPlayer as dbAddPlayer, updateAccount } from '@/lib/supabaseStore';
 
 export default function JoinGamePage() {
   const { account, linkedPlayerId, logout } = useAuth();
@@ -25,13 +25,10 @@ export default function JoinGamePage() {
     if (!code.trim() || !account) return;
     setJoining(true);
 
-    // Ensure player profile exists
     let playerId = myPlayer?.id;
     if (!playerId) {
-      // Call store directly so we get the player object back
       const newPlayer = await dbAddPlayer(account.name, account.id);
       playerId = newPlayer.id;
-      // Link account → player
       await updateAccount({ ...account, playerId });
       await refreshAll();
     }
@@ -41,9 +38,10 @@ export default function JoinGamePage() {
     const session = await joinSession(code.trim().toUpperCase(), playerId);
     setJoining(false);
     if (!session) {
-      toast.error('Invalid or expired join code.');
+      toast.error('No session found with that code.');
+    } else if ('error' in session) {
+      toast.error(session.error);
     } else {
-      setJoined(true);
       setCode('');
       toast.success(`Joined session: ${session.name}`);
     }

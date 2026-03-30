@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Copy, X, Users, Calendar, CheckCircle } from 'lucide-react';
+import { Plus, Copy, X, Users, Calendar, AlertTriangle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { type GameSession } from '@/lib/db';
@@ -84,8 +84,11 @@ function SessionCard({ session, players, onClose }: { session: GameSession; play
 export default function SessionsPage() {
   const { sessions, players, createSession, closeSession } = useApp();
   const [showCreate, setShowCreate] = useState(false);
+  const [showCloseConfirm, setShowCloseConfirm] = useState(false);
+  const [sessionToClose, setSessionToClose] = useState<GameSession | null>(null);
   const [sessionName, setSessionName] = useState('');
   const [creating, setCreating] = useState(false);
+  const [closing, setClosing] = useState(false);
 
   const active = sessions.filter(s => s.status === 'active');
   const closed = sessions.filter(s => s.status === 'closed');
@@ -98,6 +101,21 @@ export default function SessionsPage() {
     setSessionName('');
     setShowCreate(false);
     toast.success(`Session created! Code: ${s.joinCode}`);
+  };
+
+  const handleCloseClick = (session: GameSession) => {
+    setSessionToClose(session);
+    setShowCloseConfirm(true);
+  };
+
+  const handleCloseConfirm = async () => {
+    if (!sessionToClose) return;
+    setClosing(true);
+    await closeSession(sessionToClose.id);
+    setClosing(false);
+    setShowCloseConfirm(false);
+    setSessionToClose(null);
+    toast.success('Session closed. All players removed from queue.');
   };
 
   return (
@@ -126,7 +144,7 @@ export default function SessionsPage() {
               <p className="text-xs font-display tracking-widest text-muted-foreground mb-3">ACTIVE</p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <AnimatePresence>
-                  {active.map(s => <SessionCard key={s.id} session={s} players={players} onClose={() => closeSession(s.id)} />)}
+                  {active.map(s => <SessionCard key={s.id} session={s} players={players} onClose={() => handleCloseClick(s)} />)}
                 </AnimatePresence>
               </div>
             </div>
@@ -142,6 +160,7 @@ export default function SessionsPage() {
         </div>
       )}
 
+      {/* Create Session Dialog */}
       <Dialog open={showCreate} onOpenChange={setShowCreate}>
         <DialogContent className="max-w-sm bg-card border-border/60 elevation-4">
           <DialogHeader>
@@ -163,6 +182,29 @@ export default function SessionsPage() {
             <Button variant="ghost" onClick={() => setShowCreate(false)} className="font-display tracking-wider text-xs">Cancel</Button>
             <Button onClick={handleCreate} disabled={!sessionName.trim() || creating} className="font-display tracking-widest text-xs elevation-1">
               <Plus className="mr-2 h-3.5 w-3.5" /> Create
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Close Session Confirmation Dialog */}
+      <Dialog open={showCloseConfirm} onOpenChange={setShowCloseConfirm}>
+        <DialogContent className="max-w-sm bg-card border-border/60 elevation-4">
+          <DialogHeader>
+            <DialogTitle className="font-display tracking-widest text-base flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-orange-400" />
+              Close Session?
+            </DialogTitle>
+            <DialogDescription className="text-sm text-muted-foreground pt-2">
+              This will close "{sessionToClose?.name}" and remove all {sessionToClose?.playerIds.length || 0} player(s) from the queue.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setShowCloseConfirm(false)} disabled={closing} className="font-display tracking-wider text-xs">
+              Cancel
+            </Button>
+            <Button onClick={handleCloseConfirm} disabled={closing} variant="destructive" className="font-display tracking-widest text-xs">
+              <X className="mr-2 h-3.5 w-3.5" /> Close Session
             </Button>
           </DialogFooter>
         </DialogContent>

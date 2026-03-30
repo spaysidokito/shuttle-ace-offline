@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { type Account } from '@/lib/db';
-import { getAccount, getAccountByName, createAccount, updateAccount, ensureAdminAccount, getAllAccounts, getPlayer } from '@/lib/store';
+import { getAccount, getAccountByName, createAccount, updateAccount, ensureAdminAccount } from '@/lib/supabaseStore';
 
 const SESSION_KEY = 'rallyq_session';
 

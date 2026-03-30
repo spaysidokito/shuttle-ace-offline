@@ -8,7 +8,7 @@ import {
   getQueue, addToQueue as dbAddToQueue, removeFromQueue as dbRemoveFromQueue,
   getNextPlayers, resetAllData,
   getAllSessions, createSession as dbCreateSession, closeSession as dbCloseSession, joinSession as dbJoinSession,
-} from '@/lib/store';
+} from '@/lib/supabaseStore';
 import { type Player, type Court, type Match, type Settings, type GameSession, DEFAULT_SETTINGS, generateId } from '@/lib/db';
 
 interface AppContextType {
@@ -36,7 +36,7 @@ interface AppContextType {
   resetAll: () => Promise<void>;
   createSession: (name: string) => Promise<GameSession>;
   closeSession: (id: string) => Promise<void>;
-  joinSession: (code: string, playerId: string) => Promise<GameSession | null>;
+  joinSession: (code: string, playerId: string) => Promise<GameSession | { error: string } | null>;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
